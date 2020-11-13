@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GDG Android Webinar 15</string>
+    <string name="degree_format">%.0f℃</string>
+    <string name="degree_range_format">%1$.0f℃ - %2$.0f℃</string>
+    <string name="refresh">Refresh</string>
+    <string name="fetch_error">Failed to fetch new weather data</string>
+</resources>
