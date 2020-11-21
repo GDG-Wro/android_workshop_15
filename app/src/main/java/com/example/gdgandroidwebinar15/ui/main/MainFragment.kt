@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gdgandroidwebinar15.R
 import com.example.gdgandroidwebinar15.clicks
 import com.example.gdgandroidwebinar15.consume
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.main_fragment.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -37,6 +39,11 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     private fun setUpRefreshButton() {
         viewCoroutineScope.launch {
             refreshButton.clicks().collect { viewModel.fetchForecast() }
+        }
+        refreshButton.setOnLongClickListener {
+            Firebase.analytics.setUserProperty("curious", "yes")
+            Toast.makeText(context, "\uD83D\uDC4B", Toast.LENGTH_SHORT).show()
+            true
         }
     }
 

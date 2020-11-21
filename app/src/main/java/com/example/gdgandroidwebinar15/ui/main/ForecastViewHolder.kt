@@ -9,8 +9,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.forecast_item.view.*
 import org.threeten.bp.format.DateTimeFormatter
 
-class ForecastViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer {
+class ForecastViewHolder(
+    override val containerView: View
+) : RecyclerView.ViewHolder(containerView), LayoutContainer {
     fun bind(forecast: Forecast) = with(containerView) {
         icon.load(forecast.icon) {
             error(R.drawable.ic_warning)
