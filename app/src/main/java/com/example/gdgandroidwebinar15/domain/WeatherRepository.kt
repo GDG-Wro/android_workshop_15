@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.gdgandroidwebinar15.api.WeatherService
 import com.example.gdgandroidwebinar15.database.ForecastEntity
 import com.example.gdgandroidwebinar15.database.WeatherDao
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -27,6 +29,11 @@ class WeatherRepository(
             return true
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            Firebase.crashlytics.setCustomKey(
+                "didCrashPreviously",
+                Firebase.crashlytics.didCrashOnPreviousExecution()
+            )
+            Firebase.crashlytics.recordException(e)
             Log.e("API", "Fetching forecast failed", e)
         }
         return false
