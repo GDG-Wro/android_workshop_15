@@ -11,11 +11,35 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId "com.example.gdgandroidwebinar15"
+        applicationId "pl.osmalek.bartek.gdgandroidwebinar15"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        signingConfig signingConfigs.debug
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storePassword 'android'
+            storeFile file('../keystore/debug.keystore')
+        }
+        upload {
+            keyAlias gdgwebinar15KeyAlias
+            keyPassword gdgwebinar15KeyPassword
+            storePassword gdgwebinar15StorePassword
+            storeFile file('../keystore/upload.keystore')
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.upload
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
     }
 
     compileOptions {
