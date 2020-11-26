@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gdgandroidwebinar15.R
 import com.example.gdgandroidwebinar15.clicks
 import com.example.gdgandroidwebinar15.consume
+import com.google.android.play.core.ktx.launchReview
+import com.google.android.play.core.ktx.requestReview
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -38,7 +41,13 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private fun setUpRefreshButton() {
         viewCoroutineScope.launch {
-            refreshButton.clicks().collect { viewModel.fetchForecast() }
+            refreshButton.clicks().collect {
+                val fetchForecastJob = viewModel.fetchForecast()
+                val reviewManager = ReviewManagerFactory.create(requireContext())
+                val reviewInfo = reviewManager.requestReview()
+                fetchForecastJob.join()
+                reviewManager.launchReview(requireActivity(), reviewInfo)
+            }
         }
         refreshButton.setOnLongClickListener {
             Firebase.analytics.setUserProperty("curious", "yes")
