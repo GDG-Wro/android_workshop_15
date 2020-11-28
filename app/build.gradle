@@ -14,8 +14,8 @@ android {
         applicationId "pl.osmalek.bartek.gdgandroidwebinar15"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         signingConfig signingConfigs.debug
     }
 
@@ -36,6 +36,7 @@ android {
 
     buildTypes {
         release {
+            debuggable true
             minifyEnabled true
             signingConfig signingConfigs.upload
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
