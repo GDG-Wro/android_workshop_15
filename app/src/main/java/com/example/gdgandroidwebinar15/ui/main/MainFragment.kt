@@ -18,7 +18,9 @@ import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.android.synthetic.main.main_fragment.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -41,19 +43,27 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private fun setUpRefreshButton() {
         viewCoroutineScope.launch {
-            refreshButton.clicks().collect {
-                val fetchForecastJob = viewModel.fetchForecast()
-                val reviewManager = ReviewManagerFactory.create(requireContext())
-                val reviewInfo = reviewManager.requestReview()
-                fetchForecastJob.join()
-                reviewManager.launchReview(requireActivity(), reviewInfo)
-            }
+            refreshButton.clicks().collect { fetchForecast() }
         }
         refreshButton.setOnLongClickListener {
             Firebase.analytics.setUserProperty("curious", "yes")
             Toast.makeText(context, "\uD83D\uDC4B", Toast.LENGTH_SHORT).show()
             true
         }
+    }
+
+    private suspend fun fetchForecast() {
+        val shouldAskForReview = viewCoroutineScope.async {
+            Firebase.remoteConfig.runCatching { fetchAndActivate() }
+            return@async Firebase.remoteConfig.getBoolean("ask_for_review")
+        }
+        val fetchForecastJob = viewModel.fetchForecast()
+        if (!shouldAskForReview.await()) return
+
+        val reviewManager = ReviewManagerFactory.create(requireContext())
+        val reviewInfo = reviewManager.requestReview()
+        fetchForecastJob.join()
+        reviewManager.launchReview(requireActivity(), reviewInfo)
     }
 
     private fun setUpRecyclerView() = with(weatherRecyclerView) {
